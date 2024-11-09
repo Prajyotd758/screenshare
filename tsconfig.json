@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "target": "es6", // or "esnext" if you need newer features
+      "module": "commonjs",
+      "jsx": "react-jsx", // For React projects
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "typeRoots": ["./src/types", "./node_modules/@types"]
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+  }
+  
