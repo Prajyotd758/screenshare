@@ -19,6 +19,7 @@ function createWindow() {
   });
 
   win.loadFile(path.join("dist", "index.html"));
+
 }
 
 app.whenReady().then(createWindow);
