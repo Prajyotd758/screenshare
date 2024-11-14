@@ -1,9 +1,12 @@
-const { app, BrowserWindow, desktopCapturer, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, remote } = require("electron");
+const exec = require("child_process").execSync;
 const path = require("path");
+const { stdout, stderr } = require("process");
 
 function createWindow() {
   const win = new BrowserWindow({
     autoHideMenuBar: true,
+    fullscreen: true,
     width: 1000,
     height: 600,
     webPreferences: {
@@ -13,13 +16,17 @@ function createWindow() {
     },
   });
 
-  ipcMain.handle("get-sources", async () => {
-    const sources = await desktopCapturer.getSources({ types: ["screen"] });
-    return sources;
+  ipcMain.handle("run-command", (event, args) => {
+    exec(`ren sample.txt newsample.txt`, (error, stdout, stderr) => {
+      if (error) {
+        console.log(error);
+      }
+    });
   });
 
   win.loadFile(path.join("dist", "index.html"));
 
+  win.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);

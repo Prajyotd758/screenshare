@@ -8,11 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "dist": "npm run build && electron-builder",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "lint": "eslint ."
   },
   "build": {
     "appId": "com.example.yourapp",

@@ -1,42 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
 import Peer from "peerjs";
+import "./app.css";
 
 function ScreenShare() {
-  const videeoRef = useRef();
+  const videoRef = useRef();
+  const [startStream, setStream] = useState(true);
   const [peerid, setPeerid] = useState("");
   const peerInstance = useRef(null);
 
   useEffect(() => {
-    const peer = new Peer();
+    const peer = new Peer("fusion_131120");
     peer.on("open", (id) => {
       setPeerid(id);
     });
 
+    peer.on("connection", (conn) => {
+      conn.on("data", (data) => {
+        window.electronAPI.executeCmd();
+      });
+    });
+
     peer.on("call", (call) => {
-      window.electronAPI.getScreenSources().then(async (sources) => {
-        try {
-          navigator.mediaDevices
-            .getUserMedia({
-              video: {
-                mandatory: {
-                  chromeMediaSource: "desktop",
-                  chromeMediaSourceId: sources[0].id,
-                  width: { ideal: 1920 },
-                  height: { ideal: 1080 },
-                },
-              },
-            })
-            .then((stream) => {
-              call.answer(stream);
-              call.on("stream", (remoteStream) => {
-                if (videeoRef.current) {
-                  videeoRef.current.srcObject = stream;
-                  videeoRef.current.play();
-                }
-              });
-            });
-        } catch (e) {
-          console.error("Failed to get user media", e);
+      setStream(!startStream);
+      call.answer();
+      call.on("stream", (remoteStream) => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = remoteStream;
+          videoRef.current.play();
         }
       });
     });
@@ -44,9 +34,13 @@ function ScreenShare() {
   }, []);
 
   return (
-    <div>
-      <h1>{peerid}</h1>
-      <video style={{ width: "100%", height: "auto" }} ref={videeoRef}></video>
+    <div className="container">
+      {/* <button
+        onClick={() => {
+          window.electronAPI.setScreen(true);
+        }}
+      >click me</button> */}
+      <video style={{ width: "100%", height: "auto" }} ref={videoRef}></video>
     </div>
   );
 }
